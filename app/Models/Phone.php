@@ -13,4 +13,5 @@ class Phone extends Model
         'number',
         'user_id'
     ];
+
 }

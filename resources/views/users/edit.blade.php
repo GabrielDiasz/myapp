@@ -11,7 +11,7 @@
         <div class="card-header">
             <h3 class="card-title">Editar Usuário</h3>
         </div>
-        <form class="form-horizontal" action="{{ route('users.update') }}" method="POST"enctype="multipart/form-data">
+        <form class="form-horizontal" action="{{ route('users.update') }}" method="POST" enctype="multipart/form-data">
             @method('PUT')
             @include('users.form')
         </form>

@@ -28,7 +28,7 @@ class EditUsersRequest extends FormRequest
             'name' => 'required|string',
             'email' => 'required|string|unique:users,id,'.$this->id,
             'password' => 'required|string|confirmed',
-            'phone' => 'required|string'
+            'phone' => 'required|array'
         ];
 
     }

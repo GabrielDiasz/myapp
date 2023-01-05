@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Phone;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PhoneController extends Controller
@@ -75,11 +76,13 @@ class PhoneController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Phone  $phone
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Phone $phone)
+    public function destroy($idPhone, $idUser)
     {
-        //
+        Phone::destroy($idPhone);
+
+        return redirect()->route('users.edit', $idUser);
     }
 }

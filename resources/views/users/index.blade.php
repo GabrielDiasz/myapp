@@ -38,12 +38,15 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @php
+                                $number = 17
+                            @endphp
                             @foreach($data as $item)
                                 <tr>
                                     <th>{{ $item->id }}</th>
                                     <th>{{ $item->name }}</th>
                                     <td>{{ $item->email }}</td>
-                                    <td>{{ count($item->phones) > 0 ? $item->phones[0]->number : '' }}</td>
+                                    <td>{{ $item->phones->count() > 0 ? $item->phones[0]->number : '' }}</td>
                                     <td>
                                         <a href="{{ route('users.edit', $item->id) }}" class="btn btn-primary"> <i class="fas fa-edit"></i> </a>
                                         <form action="{{ route('users.delete', $item->id) }}" method="POST" style="display: inline" >

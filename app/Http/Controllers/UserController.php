@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 
-class UserControler extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +20,6 @@ class UserControler extends Controller
     public function index()
     {
         $data = User::with('phones')->paginate(10);
-
         return view('users.index', compact('data'));
     }
 
@@ -80,7 +79,6 @@ class UserControler extends Controller
     public function edit($id)
     {
         $data = User::with('phones')->find($id);
-
         return view('users.edit', compact('data', 'id'));
     }
 
@@ -93,9 +91,11 @@ class UserControler extends Controller
      */
     public function update(EditUsersRequest $request)
     {
+//        dd($request);
         $request->validated();
 
         $id = $request['id'];
+
 
         User::find($id)->update([
             'name' => $request['name'],
@@ -103,9 +103,19 @@ class UserControler extends Controller
             'password' => Hash::make($request['password'])
         ]);
 
-        Phone::where('user_id', $id)->first()->update([
-            'number' => $request['phone']
-        ]);
+        $oldPhone = Phone::where('user_id', $id)->get();
+
+        foreach ($request['phone'] as $key => $phone) {
+            if (isset($oldPhone[$key])) {
+                $oldPhone[$key]->update([ 'number' => $phone]);
+
+            } else {
+                Phone::create([
+                    'number' => $phone,
+                    'user_id' => $id
+                ]);
+            }
+        }
 
         return redirect()->route('users.index');
     }
@@ -118,7 +128,7 @@ class UserControler extends Controller
      */
     public function destroy($id)
     {
-        User::find($id)->delete();
+        User::destroy($id);
 
         return redirect()->route('users.index');
     }

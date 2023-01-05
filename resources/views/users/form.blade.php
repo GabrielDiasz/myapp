@@ -1,3 +1,4 @@
+
 @csrf
 
 @if(isset($id))
@@ -46,28 +47,52 @@
         <div class="col-md-6">
             <input id="password_confirmation" type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" autocomplete="password" required autofocus>
             @error('password_confirmation')
-            <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
+                <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
                 </span>
             @enderror
         </div>
     </div>
 
-    <div class="form-group row" id="oldPhone">
-        <label for="phone" class="col-md-4 col-form-label text-md-right">Telefone:</label>
-        <div class="col-md-6">
-            <input data-mask="(00) 00000-0000" id="phone" type="tel" class="form-control @error('phone') is-invalid @enderror" name="phone[]" autocomplete="phone" required autofocus value="{{ isset($data) ? $data->phones[0]->number : '' }}">
-            @error('phone')
-            <span class="invalid-feedback" role="alert">
+    @php
+        $count = 0;
+    @endphp
+    @if(isset($data) && $data->phones->count() > 0)
+        @foreach($data->phones as $index => $phone)
+            <div class="form-group row" id="phone{{ $count++ }}">
+                <label for="phone" class="col-md-4 col-form-label text-md-right">Telefone:</label>
+                <div class="col-md-6">
+                    <input data-mask="(00) 0 0000-0000" id="phone" type="text" class="form-control @error('phone') is-invalid @enderror" name="phone[]" autocomplete="phone" required autofocus value="{{ $phone->number }}">
+                    @error('phone')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+
+                @if($index > 0)
+                    <a href="{{ route('phones.delete', [$phone->id, $id]) }}" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                @endif
+
+            </div>
+        @endforeach
+    @else
+        <div class="form-group row">
+            <label for="phone" class="col-md-4 col-form-label text-md-right">Telefone:</label>
+            <div class="col-md-6">
+                <input id="phone" type="text" class="form-control phone @error('phone') is-invalid @enderror" name="phone[]" autocomplete="phone" required >
+                @error('phone')
+                <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
-            @enderror
+                @enderror
+            </div>
         </div>
-    </div>
+    @endif
 
-    <div id="newPhone">
-
-    </div>
+    <div id="newPhone"></div>
 
     <div class="form-group row mb-2">
         <div class="col-md-6 offset-md-4  ">
@@ -85,10 +110,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+        $(document).ready(function (){
+            $('.phone').mask('(00) 0 0000-0000')
+        })
         function addPhone() {
-            let elementCloned = $('#oldPhone').clone();
-
-            $('#newPhone').append(elementCloned)
+            let elementCloned = $(`#phone0`).clone();
+            elementCloned[0].children[1].children[0].setAttribute('readonly', true)
+            $('#newPhone').append(elementCloned);
+            $('#phone').val('');
         }
     </script>
 @stop
